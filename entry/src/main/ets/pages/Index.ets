@@ -109,7 +109,15 @@ struct Index {
         List() {
           ForEach(this.publicList, (item: Questionnaire) => {
             ListItem() {
-              QuestionnaireCard({ questionnaire: item })
+              QuestionnaireCard({
+                questionnaire: item,
+                onClick: () => {
+                  router.pushUrl({
+                    url: 'pages/QuestionnaireFill',
+                    params: { questionnaireId: item.id }
+                  })
+                }
+              })
             }
           })
         }
@@ -140,7 +148,14 @@ struct Index {
         List() {
           ForEach(this.myDrafts, (item: Questionnaire) => {
             ListItem() {
-              QuestionnaireCard({ questionnaire: item })
+              QuestionnaireCard({
+                questionnaire: item,
+                onClick: () => {
+                  router.pushUrl({
+                    url: 'pages/QuestionnaireFill',
+                    params: { questionnaireId: item.id }
+                  })
+                }
             }
           })
         }
