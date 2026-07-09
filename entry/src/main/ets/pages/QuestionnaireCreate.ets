@@ -27,7 +27,7 @@ struct QuestionnaireCreate {
   }
 
   build() {
-    Stack() {
+    Stack({ alignContent: Alignment.TopStart }) {
       Column() {
         // 顶部导航栏
         AppBar({
@@ -80,11 +80,9 @@ struct QuestionnaireCreate {
           visible: this.showTypePicker,
           onSelect: (type: QuestionType) => {
             if (this.editingQuestionIndex >= 0) {
-              // 修改已有题目的题型
               this.vm.questions[this.editingQuestionIndex].type = type
               this.editingQuestionIndex = -1
             } else {
-              // 新增题目
               this.vm.addQuestion(type)
             }
             this.showTypePicker = false
