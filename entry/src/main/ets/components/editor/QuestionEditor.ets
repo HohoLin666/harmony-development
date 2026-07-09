@@ -68,7 +68,13 @@ export struct QuestionEditor {
 
       // 选项编辑区（单选/多选/矩阵）
       if (this.needsOptions()) {
-        OptionEditor({ questionId: this.question.id, options: $question.options })
+        OptionEditor({
+          questionId: this.question.id,
+          options: this.question.options,
+          onOptionsChange: (newOptions: Option[]) => {
+            this.question.options = newOptions
+          }
+        })
           .margin({ bottom: AppDimens.SPACE_SM })
       }
 

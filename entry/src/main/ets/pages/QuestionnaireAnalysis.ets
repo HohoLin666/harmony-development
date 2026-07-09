@@ -22,7 +22,7 @@ struct QuestionnaireAnalysis {
   aboutToAppear(): void {
     try {
       const params = NavigationUtil.getParams()
-      const qId = params?.['questionnaireId'] as string || MockDataGenerator.mockIds[0]
+      const qId = params.get('questionnaireId') as string || MockDataGenerator.mockIds[0]
       this.vm.loadData(qId)
     } catch (e) {
       // Fallback
@@ -124,7 +124,7 @@ struct QuestionnaireAnalysis {
   buildQuestionCard(question: Question, index: number) {
     Column() {
       Row() {
-        Text(`${index + 1}. [${QuestionTypeLabel[question.type] || '未知'}]`)
+        Text(`${index + 1}. [${QuestionTypeLabel.get(question.type) || '未知'}]`)
           .fontSize(AppDimens.FONT_CAPTION).fontColor(AppColors.PRIMARY).fontWeight(FontWeight.Medium)
           .padding({ left: 8, right: 8, top: 2, bottom: 2 })
           .borderRadius(AppDimens.RADIUS_PILL).backgroundColor(AppColors.PRIMARY_LIGHT)

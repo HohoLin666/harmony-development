@@ -115,7 +115,9 @@ struct Index {
               QuestionnaireCard({
                 questionnaire: item,
                 onCardClick: () => {
-                  NavigationUtil.pushUrl('pages/QuestionnaireFill', { questionnaireId: item.id })
+                  const params: Map<string, Object> = new Map()
+                  params.set('questionnaireId', item.id)
+                  NavigationUtil.pushUrl('pages/QuestionnaireFill', params)
                 }
               })
             }
@@ -153,9 +155,13 @@ struct Index {
                 onCardClick: () => {
                   // 我的问卷 → 查看数据分析
                   if (item.status === PublishStatus.PUBLISHED) {
-                    NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', { questionnaireId: item.id })
+                    const params: Map<string, Object> = new Map()
+                    params.set('questionnaireId', item.id)
+                    NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', params)
                   } else {
-                    NavigationUtil.pushUrl('pages/QuestionnaireCreate', { questionnaireId: item.id })
+                    const params: Map<string, Object> = new Map()
+                    params.set('questionnaireId', item.id)
+                    NavigationUtil.pushUrl('pages/QuestionnaireCreate', params)
                   }
                 }
               })

@@ -22,8 +22,8 @@ struct QuestionnaireFill {
 
   aboutToAppear(): void {
     const params = NavigationUtil.getParams()
-    if (params && params['questionnaireId']) {
-      this.questionnaireId = params['questionnaireId'] as string
+    if (params && params.get('questionnaireId')) {
+      this.questionnaireId = params.get('questionnaireId') as string
     }
     this.loadData()
   }
@@ -68,7 +68,7 @@ struct QuestionnaireFill {
                 Column() {
                   ForEach(this.vm.questions, (question: Question, index: number) => {
                     QuestionRenderer({
-                      question: $question,
+                      question: question,
                       index: index + 1,
                       answerValue: this.vm.getAnswer(question.id),
                       onAnswerChange: (value: string) => {
@@ -135,7 +135,7 @@ struct QuestionnaireFill {
         .fontColor(AppColors.TEXT_PRIMARY).margin({ bottom: AppDimens.SPACE_SM })
       Text('感谢你的参与！').fontSize(AppDimens.FONT_BODY)
         .fontColor(AppColors.TEXT_SECONDARY).margin({ bottom: AppDimens.SPACE_XXL })
-      PrimaryButton({ text: '返回首页', onButtonClick: () => { router.back() } }).width('60%')
+      PrimaryButton({ text: '返回首页', onButtonClick: () => { NavigationUtil.back() } }).width('60%')
     }
     .width('100%').layoutWeight(1)
     .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)

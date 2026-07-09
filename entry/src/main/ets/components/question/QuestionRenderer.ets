@@ -12,7 +12,7 @@ import { AppDimens } from '../../theme/AppDimens'
  */
 @Component
 export struct QuestionRenderer {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   @Prop index: number = 1
   onAnswerChange?: (value: string) => void
@@ -102,7 +102,7 @@ export struct QuestionRenderer {
  */
 @Component
 struct SingleChoice {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -145,7 +145,7 @@ struct SingleChoice {
  */
 @Component
 struct MultiChoice {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -170,6 +170,10 @@ struct MultiChoice {
     if (this.onAnswerChange) this.onAnswerChange(JSON.stringify(selected))
   }
 
+  private isSelected(optionId: string): boolean {
+    return this.getSelectedIds().includes(optionId)
+  }
+
   build() {
     Column() {
       Text('（可多选）')
@@ -178,11 +182,10 @@ struct MultiChoice {
         .margin({ bottom: AppDimens.SPACE_SM })
 
       ForEach(this.question.options, (option: Option, index: number) => {
-        const isChecked = this.getSelectedIds().includes(option.id)
         Row() {
-          Text(isChecked ? '☑' : '☐')
+          Text(this.isSelected(option.id) ? '☑' : '☐')
             .fontSize(20)
-            .fontColor(isChecked ? AppColors.PRIMARY : AppColors.TEXT_TERTIARY)
+            .fontColor(this.isSelected(option.id) ? AppColors.PRIMARY : AppColors.TEXT_TERTIARY)
             .margin({ right: AppDimens.SPACE_MD })
             .width(24)
 
@@ -194,7 +197,7 @@ struct MultiChoice {
         .width('100%')
         .padding({ top: 10, bottom: 10, left: AppDimens.SPACE_SM, right: AppDimens.SPACE_SM })
         .borderRadius(AppDimens.RADIUS_MD)
-        .backgroundColor(isChecked ? AppColors.PRIMARY_LIGHT : Color.Transparent)
+        .backgroundColor(this.isSelected(option.id) ? AppColors.PRIMARY_LIGHT : Color.Transparent)
         .margin({ bottom: AppDimens.SPACE_SM })
         .onClick(() => {
           this.toggleOption(option.id)
@@ -209,7 +212,7 @@ struct MultiChoice {
  */
 @Component
 struct TextFill {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -230,7 +233,7 @@ struct TextFill {
  */
 @Component
 struct TextAreaFill {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -252,23 +255,32 @@ struct TextAreaFill {
  */
 @Component
 struct RateScore {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
+  private get maxRate(): number {
+    return this.question.maxRate || 5
+  }
+
+  private get currentRate(): number {
+    return parseInt(this.answerValue) || 0
+  }
+
+  private get scores(): number[] {
+    const result: number[] = []
+    for (let i = 1; i <= this.maxRate; i++) {
+      result.push(i)
+    }
+    return result
+  }
+
   build() {
     Row() {
-      const maxRate = this.question.maxRate || 5
-      const currentRate = parseInt(this.answerValue) || 0
-      const scores: number[] = []
-      for (let i = 1; i <= maxRate; i++) {
-        scores.push(i)
-      }
-
-      ForEach(scores, (score: number) => {
-        Text(score <= currentRate ? '★' : '☆')
+      ForEach(this.scores, (score: number) => {
+        Text(score <= this.currentRate ? '★' : '☆')
           .fontSize(32)
-          .fontColor(score <= currentRate ? AppColors.WARNING : AppColors.TEXT_PLACEHOLDER)
+          .fontColor(score <= this.currentRate ? AppColors.WARNING : AppColors.TEXT_PLACEHOLDER)
           .margin({ right: AppDimens.SPACE_SM })
           .onClick(() => {
             if (this.onAnswerChange) this.onAnswerChange(String(score))
@@ -286,7 +298,7 @@ struct RateScore {
  */
 @Component
 struct NumberFill {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -308,7 +320,7 @@ struct NumberFill {
  */
 @Component
 struct DateFill {
-  @ObjectLink question: Question
+  @Prop question: Question
   @Prop answerValue: string = ''
   onAnswerChange?: (value: string) => void
 
@@ -318,8 +330,8 @@ struct DateFill {
       end: new Date('2030-12-31'),
       selected: this.answerValue ? new Date(this.answerValue) : new Date()
     })
-      .onSelectedDateChange((value: Date) => {
-        const dateStr = `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
+      .onChange((value: DatePickerResult) => {
+        const dateStr = `${value.year}-${value.month}-${value.day}`
         if (this.onAnswerChange) this.onAnswerChange(dateStr)
       })
   }

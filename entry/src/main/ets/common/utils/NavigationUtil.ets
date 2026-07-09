@@ -7,9 +7,15 @@ import { BusinessError } from '@kit.BasicServicesKit'
  */
 export class NavigationUtil {
   /** 跳转页面 */
-  static pushUrl(url: string, params?: Record<string, Object>): void {
+  static pushUrl(url: string, params?: Map<string, Object>): void {
     try {
-      router.pushUrl({ url, params })
+      const routerParams: Record<string, Object> = {}
+      if (params) {
+        params.forEach((value, key) => {
+          routerParams[key] = value
+        })
+      }
+      router.pushUrl({ url, params: routerParams })
     } catch (err) {
       const error = err as BusinessError
       console.error(`[Navigation] pushUrl failed: ${error.message}`)
@@ -27,12 +33,17 @@ export class NavigationUtil {
   }
 
   /** 获取路由参数 */
-  static getParams(): Record<string, Object> {
+  static getParams(): Map<string, Object> {
+    const result: Map<string, Object> = new Map()
     try {
-      return router.getParams() as Record<string, Object> || {}
+      const raw = router.getParams() as Record<string, Object> || {}
+      Object.keys(raw).forEach(key => {
+        result.set(key, raw[key])
+      })
     } catch (err) {
-      return {}
+      return new Map()
     }
+    return result
   }
 
   /** 显示 Toast 提示 */
