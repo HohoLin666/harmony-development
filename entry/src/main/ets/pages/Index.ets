@@ -7,7 +7,7 @@ import { AppDimens } from '../theme/AppDimens'
 import { Questionnaire } from '../model/Questionnaire'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { MockDataGenerator } from '../common/utils/MockData'
-import { router } from '@kit.ArkUI'
+import { NavigationUtil } from '../common/utils/NavigationUtil'
 
 // 底部 Tab 配置
 const HOME_TABS: TabItem[] = [
@@ -52,13 +52,16 @@ struct Index {
       // 主内容区
       Column() {
         if (this.loading) {
-          Text('正在加载...')
-            .fontSize(AppDimens.FONT_BODY)
-            .fontColor(AppColors.TEXT_TERTIARY)
-            .width('100%')
-            .height('100%')
-            .justifyContent(FlexAlign.Center)
-            .textAlign(TextAlign.Center)
+          Column() {
+            Text('正在加载...')
+              .fontSize(AppDimens.FONT_BODY)
+              .fontColor(AppColors.TEXT_TERTIARY)
+              .textAlign(TextAlign.Center)
+          }
+          .justifyContent(FlexAlign.Center)
+          .alignItems(HorizontalAlign.Center)
+          .width('100%')
+          .height('100%')
         } else {
           this.buildTabContent()
         }
@@ -73,7 +76,7 @@ struct Index {
       })
 
       // 底部导航栏
-      TabBar({ tabs: HOME_TABS, tabIndex: $currentTab })
+      TabBar({ tabs: HOME_TABS, selectedIndex: $currentTab })
     }
     .width('100%')
     .height('100%')
@@ -111,11 +114,8 @@ struct Index {
             ListItem() {
               QuestionnaireCard({
                 questionnaire: item,
-                onClick: () => {
-                  router.pushUrl({
-                    url: 'pages/QuestionnaireFill',
-                    params: { questionnaireId: item.id }
-                  })
+                onCardClick: () => {
+                  NavigationUtil.pushUrl('pages/QuestionnaireFill', { questionnaireId: item.id })
                 }
               })
             }
@@ -150,20 +150,29 @@ struct Index {
             ListItem() {
               QuestionnaireCard({
                 questionnaire: item,
-                onClick: () => {
+                onCardClick: () => {
                   // 我的问卷 → 查看数据分析
                   if (item.status === PublishStatus.PUBLISHED) {
-                    router.pushUrl({
-                      url: 'pages/QuestionnaireAnalysis',
-                      params: { questionnaireId: item.id }
-                    })
+                    NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', { questionnaireId: item.id })
                   } else {
-                    router.pushUrl({
-                      url: 'pages/QuestionnaireCreate',
-                      params: { questionnaireId: item.id }
-                    })
+                    NavigationUtil.pushUrl('pages/QuestionnaireCreate', { questionnaireId: item.id })
                   }
                 }
+              })
+            }
+          })
+        }
+        .width('100%')
+        .height('100%')
+        .divider({ strokeWidth: 0 })
+        .scrollBar(BarState.Off)
+
+        // FAB 创建按钮
+        this.buildFAB()
+      }
+    }
+  }
+
   @Builder
   buildFAB() {
     Button('+')
@@ -182,6 +191,6 @@ struct Index {
 
   /** 跳转到创建页面 */
   goCreate(): void {
-    router.pushUrl({ url: 'pages/QuestionnaireCreate' })
+    NavigationUtil.pushUrl('pages/QuestionnaireCreate')
   }
 }

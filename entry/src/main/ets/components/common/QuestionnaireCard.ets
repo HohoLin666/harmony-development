@@ -11,7 +11,7 @@ import { AppDimens } from '../../theme/AppDimens'
 @Component
 export struct QuestionnaireCard {
   @ObjectLink questionnaire: Questionnaire
-  onClick?: () => void
+  onCardClick?: () => void
 
   build() {
     Column() {
@@ -26,12 +26,12 @@ export struct QuestionnaireCard {
           .textOverflow({ overflow: TextOverflow.Ellipsis })
 
         // 状态标签
-        Text(PublishStatusLabel[this.questionnaire.status])
+        Text(PublishStatusLabel.get(this.questionnaire.status) || '')
           .fontSize(AppDimens.FONT_CAPTION)
-          .fontColor(PublishStatusColor[this.questionnaire.status])
+          .fontColor(PublishStatusColor.get(this.questionnaire.status) || '')
           .padding({ left: 8, right: 8, top: 2, bottom: 2 })
           .borderRadius(AppDimens.RADIUS_PILL)
-          .border({ width: 1, color: PublishStatusColor[this.questionnaire.status] })
+          .border({ width: 1, color: PublishStatusColor.get(this.questionnaire.status) || '' })
       }
       .width('100%')
       .justifyContent(FlexAlign.SpaceBetween)
@@ -81,8 +81,8 @@ export struct QuestionnaireCard {
     .borderRadius(AppDimens.RADIUS_LG)
     .margin({ bottom: AppDimens.CARD_MARGIN_BOTTOM })
     .onClick(() => {
-      if (this.onClick) {
-        this.onClick()
+      if (this.onCardClick) {
+        this.onCardClick()
       }
     })
   }

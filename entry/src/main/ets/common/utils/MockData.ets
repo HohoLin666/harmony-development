@@ -1,8 +1,7 @@
-import { Questionnaire } from '../model/Questionnaire'
-import { Question } from '../model/Question'
-import { Option } from '../model/Question'
-import { PublishStatus } from '../model/enums/PublishStatus'
-import { QuestionType } from '../model/enums/QuestionType'
+import { Questionnaire } from '../../model/Questionnaire'
+import { Question, Option } from '../../model/Question'
+import { PublishStatus } from '../../model/enums/PublishStatus'
+import { QuestionType } from '../../model/enums/QuestionType'
 
 /**
  * Mock 数据工具 — 用于开发阶段生成测试数据
@@ -16,7 +15,7 @@ export class MockDataGenerator {
     const mockList: Questionnaire[] = []
 
     // 问卷 1：已发布
-    const q1 = new Questionnaire()
+    const q1: Questionnaire = new Questionnaire()
     q1.id = 'q001'
     q1.title = '2024年度员工满意度调查'
     q1.description = '为了更好地了解员工的工作满意度，请如实填写以下问卷，您的反馈将帮助我们改进。'
@@ -28,7 +27,7 @@ export class MockDataGenerator {
     mockList.push(q1)
 
     // 问卷 2：已发布
-    const q2 = new Questionnaire()
+    const q2: Questionnaire = new Questionnaire()
     q2.id = 'q002'
     q2.title = '校园食堂菜品满意度调研'
     q2.description = '选出你最满意的食堂档口，帮助我们优化菜品供应！'
@@ -40,7 +39,7 @@ export class MockDataGenerator {
     mockList.push(q2)
 
     // 问卷 3：草稿
-    const q3 = new Questionnaire()
+    const q3: Questionnaire = new Questionnaire()
     q3.id = 'q003'
     q3.title = '社团招新报名表'
     q3.description = '欢迎报名参加本学期的社团活动'
@@ -96,7 +95,7 @@ export class MockDataGenerator {
     id: string, questionnaireId: string, type: QuestionType,
     title: string, orderIndex: number, optionTexts?: string[]
   ): Question {
-    const q = new Question()
+    const q: Question = new Question()
     q.id = `${questionnaireId}_${id}`
     q.questionnaireId = questionnaireId
     q.type = type
@@ -105,8 +104,8 @@ export class MockDataGenerator {
     q.required = true
 
     if (optionTexts && (type === QuestionType.SINGLE || type === QuestionType.MULTI)) {
-      optionTexts.forEach((text, i) => {
-        const opt = new Option()
+      optionTexts.forEach((text: string, i: number) => {
+        const opt: Option = new Option()
         opt.id = `${q.id}_opt${i}`
         opt.questionId = q.id
         opt.text = text

@@ -1,4 +1,4 @@
-import { Question } from '../../model/Question'
+import { Question, Option } from '../../model/Question'
 import { QuestionType } from '../../model/enums/QuestionType'
 import { AppColors } from '../../theme/AppColors'
 import { AppDimens } from '../../theme/AppDimens'
@@ -108,7 +108,7 @@ struct SingleChoice {
 
   build() {
     Column() {
-      ForEach(this.question.options, (option, index) => {
+      ForEach(this.question.options, (option: Option, index: number) => {
         Row() {
           Text(this.answerValue === option.id ? '●' : '○')
             .fontSize(20)
@@ -152,7 +152,8 @@ struct MultiChoice {
   private getSelectedIds(): string[] {
     if (!this.answerValue) return []
     try {
-      return JSON.parse(this.answerValue) as string[]
+      const arr: string[] = JSON.parse(this.answerValue)
+      return arr
     } catch (e) {
       return []
     }
@@ -176,7 +177,7 @@ struct MultiChoice {
         .fontColor(AppColors.TEXT_TERTIARY)
         .margin({ bottom: AppDimens.SPACE_SM })
 
-      ForEach(this.question.options, (option, index) => {
+      ForEach(this.question.options, (option: Option, index: number) => {
         const isChecked = this.getSelectedIds().includes(option.id)
         Row() {
           Text(isChecked ? '☑' : '☐')
@@ -259,8 +260,12 @@ struct RateScore {
     Row() {
       const maxRate = this.question.maxRate || 5
       const currentRate = parseInt(this.answerValue) || 0
+      const scores: number[] = []
+      for (let i = 1; i <= maxRate; i++) {
+        scores.push(i)
+      }
 
-      ForEach(Array.from({ length: maxRate }, (_, i) => i + 1), (score: number) => {
+      ForEach(scores, (score: number) => {
         Text(score <= currentRate ? '★' : '☆')
           .fontSize(32)
           .fontColor(score <= currentRate ? AppColors.WARNING : AppColors.TEXT_PLACEHOLDER)
@@ -313,8 +318,8 @@ struct DateFill {
       end: new Date('2030-12-31'),
       selected: this.answerValue ? new Date(this.answerValue) : new Date()
     })
-      .onChange((value: DatePickerResult) => {
-        const dateStr = `${value.year}-${value.month}-${value.day}`
+      .onSelectedDateChange((value: Date) => {
+        const dateStr = `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
         if (this.onAnswerChange) this.onAnswerChange(dateStr)
       })
   }

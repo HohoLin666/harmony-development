@@ -6,8 +6,7 @@ import { Question } from '../model/Question'
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { MockDataGenerator } from '../common/utils/MockData'
-import { router } from '@kit.ArkUI'
-import { promptAction } from '@kit.ArkUI'
+import { NavigationUtil } from '../common/utils/NavigationUtil'
 
 /**
  * 填写问卷页
@@ -22,7 +21,7 @@ struct QuestionnaireFill {
   private scroller: Scroller = new Scroller()
 
   aboutToAppear(): void {
-    const params = router.getParams() as Record<string, Object>
+    const params = NavigationUtil.getParams()
     if (params && params['questionnaireId']) {
       this.questionnaireId = params['questionnaireId'] as string
     }
@@ -37,68 +36,71 @@ struct QuestionnaireFill {
   }
 
   build() {
-    if (this.loading) {
-      Column() {
-        AppBar({ title: '填写问卷', showBack: true, onBack: () => router.back() })
+    Stack() {
+      if (this.loading) {
         Column() {
-          LoadingProgress().width(36).height(36).color(AppColors.PRIMARY)
-          Text('正在加载问卷...')
-            .fontSize(AppDimens.FONT_BODY)
-            .fontColor(AppColors.TEXT_TERTIARY)
-            .margin({ top: AppDimens.SPACE_MD })
-        }
-        .layoutWeight(1).width('100%')
-        .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)
-      }
-      .width('100%').height('100%')
-    }
-
-    Column() {
-      AppBar({
-        title: this.vm.questionnaire.title || '填写问卷',
-        showBack: true,
-        onBack: () => router.back()
-      })
-
-      if (this.vm.submitted) {
-        this.buildSuccessPage()
-      } else {
-        Column() {
-          this.buildProgressBar()
-          Scroll(this.scroller) {
-            Column() {
-              ForEach(this.vm.questions, (question: Question, index: number) => {
-                QuestionRenderer({
-                  question: $question,
-                  index: index + 1,
-                  answerValue: this.vm.getAnswer(question.id),
-                  onAnswerChange: (value: string) => {
-                    this.vm.setAnswer(question.id, value)
-                  }
-                })
-              })
-
-              PrimaryButton({
-                text: '提交问卷',
-                onClick: () => { this.handleSubmit() }
-              })
-              .margin({ top: AppDimens.SPACE_LG, bottom: AppDimens.SPACE_XXL })
-            }
-            .padding({
-              left: AppDimens.PAGE_PADDING_H,
-              right: AppDimens.PAGE_PADDING_H,
-              top: AppDimens.PAGE_PADDING_V
-            })
+          AppBar({ title: '填写问卷', showBack: true, onBack: () => NavigationUtil.back() })
+          Column() {
+            LoadingProgress().width(36).height(36).color(AppColors.PRIMARY)
+            Text('正在加载问卷...')
+              .fontSize(AppDimens.FONT_BODY)
+              .fontColor(AppColors.TEXT_TERTIARY)
+              .margin({ top: AppDimens.SPACE_MD })
           }
           .layoutWeight(1).width('100%')
-          .backgroundColor(AppColors.BG_SECONDARY)
-          .scrollBar(BarState.Off)
+          .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)
         }
-        .layoutWeight(1).width('100%')
+        .width('100%').height('100%')
+      } else {
+        Column() {
+          AppBar({
+            title: this.vm.questionnaire.title || '填写问卷',
+            showBack: true,
+            onBack: () => NavigationUtil.back()
+          })
+
+          if (this.vm.submitted) {
+            this.buildSuccessPage()
+          } else {
+            Column() {
+              this.buildProgressBar()
+              Scroll(this.scroller) {
+                Column() {
+                  ForEach(this.vm.questions, (question: Question, index: number) => {
+                    QuestionRenderer({
+                      question: $question,
+                      index: index + 1,
+                      answerValue: this.vm.getAnswer(question.id),
+                      onAnswerChange: (value: string) => {
+                        this.vm.setAnswer(question.id, value)
+                      }
+                    })
+                  })
+
+                  PrimaryButton({
+                    text: '提交问卷',
+                    onButtonClick: () => { this.handleSubmit() }
+                  })
+                  .margin({ top: AppDimens.SPACE_LG, bottom: AppDimens.SPACE_XXL })
+                }
+                .padding({
+                  left: AppDimens.PAGE_PADDING_H,
+                  right: AppDimens.PAGE_PADDING_H,
+                  top: AppDimens.PAGE_PADDING_V
+                })
+              }
+              .layoutWeight(1).width('100%')
+              .backgroundColor(AppColors.BG_SECONDARY)
+              .scrollBar(BarState.Off)
+            }
+            .layoutWeight(1).width('100%')
+          }
+        }
+        .width('100%').height('100%')
+        .backgroundColor(AppColors.BG_SECONDARY)
       }
     }
     .width('100%').height('100%')
-    .backgroundColor(AppColors.BG_SECONDARY)
   }
 
   @Builder
@@ -133,7 +135,7 @@ struct QuestionnaireFill {
         .fontColor(AppColors.TEXT_PRIMARY).margin({ bottom: AppDimens.SPACE_SM })
       Text('感谢你的参与！').fontSize(AppDimens.FONT_BODY)
         .fontColor(AppColors.TEXT_SECONDARY).margin({ bottom: AppDimens.SPACE_XXL })
-      PrimaryButton({ text: '返回首页', onClick: () => { router.back() } }).width('60%')
+      PrimaryButton({ text: '返回首页', onButtonClick: () => { router.back() } }).width('60%')
     }
     .width('100%').layoutWeight(1)
     .justifyContent(FlexAlign.Center).alignItems(HorizontalAlign.Center)
@@ -143,14 +145,11 @@ struct QuestionnaireFill {
   handleSubmit(): void {
     const validation = this.vm.validate()
     if (!validation.valid) {
-      promptAction.showToast({ message: validation.message, duration: 2000 })
+      NavigationUtil.showToast(validation.message)
       return
     }
-    AlertDialog.show({
-      title: '确认提交',
-      message: '提交后将无法修改，确认提交吗？',
-      primaryButton: { value: '确认提交', action: () => { this.vm.submit() } },
-      secondaryButton: { value: '再检查一下', action: () => {} }
+    NavigationUtil.showDialog('确认提交', '提交后将无法修改，确认提交吗？', () => {
+      this.vm.submit()
     })
   }
 }

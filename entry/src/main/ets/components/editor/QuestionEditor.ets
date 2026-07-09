@@ -30,7 +30,7 @@ export struct QuestionEditor {
 
         // 题型标签
         Row() {
-          Text(QuestionTypeLabel[this.question.type] || '未知')
+          Text(QuestionTypeLabel.get(this.question.type) || '未知')
             .fontSize(AppDimens.FONT_CAPTION)
             .fontColor(AppColors.PRIMARY)
             .padding({ left: 8, right: 8, top: 2, bottom: 2 })

@@ -21,7 +21,7 @@ export interface TabItem {
 @Component
 export struct TabBar {
   @Prop tabs: TabItem[] = []
-  @Link tabIndex: number
+  @Link selectedIndex: number
   onTabChange?: (index: number) => void
 
   build() {
@@ -30,18 +30,18 @@ export struct TabBar {
         Column() {
           Text(tab.iconSymbol)
             .fontSize(AppDimens.ICON_SIZE_LG)
-            .fontColor(index === this.tabIndex ? AppColors.TAB_ACTIVE : AppColors.TAB_INACTIVE)
+            .fontColor(index === this.selectedIndex ? AppColors.TAB_ACTIVE : AppColors.TAB_INACTIVE)
             .margin({ bottom: 2 })
 
           Text(tab.label)
             .fontSize(AppDimens.FONT_CAPTION)
-            .fontColor(index === this.tabIndex ? AppColors.TAB_ACTIVE : AppColors.TAB_INACTIVE)
+            .fontColor(index === this.selectedIndex ? AppColors.TAB_ACTIVE : AppColors.TAB_INACTIVE)
         }
         .layoutWeight(1)
         .alignItems(HorizontalAlign.Center)
         .padding({ top: AppDimens.SPACE_SM, bottom: AppDimens.SPACE_SM })
         .onClick(() => {
-          this.tabIndex = index
+          this.selectedIndex = index
           if (this.onTabChange) {
             this.onTabChange(index)
           }

@@ -5,13 +5,13 @@ import { AppDimens } from '../../theme/AppDimens'
  * 主操作按钮 — 蓝色圆角，参考选题文档 CTA 按钮风格
  * @param text 按钮文案
  * @param disabled 是否禁用
- * @param onClick 点击回调
+ * @param onButtonClick 点击回调
  */
 @Component
 export struct PrimaryButton {
   @Prop text: string = '确定'
   @Prop disabled: boolean = false
-  onClick?: () => void
+  onButtonClick?: () => void
 
   build() {
     Button(this.text)
@@ -25,8 +25,8 @@ export struct PrimaryButton {
       .enabled(!this.disabled)
       .opacity(this.disabled ? 0.5 : 1.0)
       .onClick(() => {
-        if (!this.disabled && this.onClick) {
-          this.onClick()
+        if (!this.disabled && this.onButtonClick) {
+          this.onButtonClick()
         }
       })
   }

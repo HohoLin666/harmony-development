@@ -23,13 +23,13 @@ export enum QuestionType {
 /**
  * 题型中文显示名映射
  */
-export const QuestionTypeLabel: Record<string, string> = {
-  [QuestionType.SINGLE]: '单选题',
-  [QuestionType.MULTI]: '多选题',
-  [QuestionType.TEXT]: '填空题',
-  [QuestionType.TEXTAREA]: '文本题',
-  [QuestionType.RATE]: '评分题',
-  [QuestionType.MATRIX]: '矩阵题',
-  [QuestionType.DATE]: '日期题',
-  [QuestionType.NUMBER]: '数字题'
-}
+const labelMap: Map<string, string> = new Map()
+labelMap.set(QuestionType.SINGLE, '单选题')
+labelMap.set(QuestionType.MULTI, '多选题')
+labelMap.set(QuestionType.TEXT, '填空题')
+labelMap.set(QuestionType.TEXTAREA, '文本题')
+labelMap.set(QuestionType.RATE, '评分题')
+labelMap.set(QuestionType.MATRIX, '矩阵题')
+labelMap.set(QuestionType.DATE, '日期题')
+labelMap.set(QuestionType.NUMBER, '数字题')
+export const QuestionTypeLabel: Map<string, string> = labelMap

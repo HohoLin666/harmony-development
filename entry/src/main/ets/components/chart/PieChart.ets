@@ -4,11 +4,11 @@ import { AppDimens } from '../../theme/AppDimens'
 /**
  * 统计项
  */
-export interface StatItem {
-  label: string
-  value: number
-  percent: number
-  color: string
+export class StatItem {
+  label: string = ''
+  value: number = 0
+  percent: number = 0
+  color: string = ''
 }
 
 /** 饼图配色 */
@@ -145,10 +145,14 @@ export function toPieData(
   values: number[],
   total: number
 ): StatItem[] {
-  return labels.map((label, i) => ({
-    label,
-    value: values[i] || 0,
-    percent: total > 0 ? Math.round((values[i] || 0) / total * 100) : 0,
-    color: PIE_COLORS[i % PIE_COLORS.length]
-  }))
+  const result: StatItem[] = []
+  labels.forEach((label, i) => {
+    const item = new StatItem()
+    item.label = label
+    item.value = values[i] || 0
+    item.percent = total > 0 ? Math.round((values[i] || 0) / total * 100) : 0
+    item.color = PIE_COLORS[i % PIE_COLORS.length]
+    result.push(item)
+  })
+  return result
 }

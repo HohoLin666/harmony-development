@@ -112,5 +112,6 @@ export struct QuestionTypePicker {
     .borderRadius({ topLeft: AppDimens.RADIUS_LG, topRight: AppDimens.RADIUS_LG })
     .position({ x: 0, y: 'auto' })
     .animation({ duration: 200, curve: Curve.EaseOut })
+    }
   }
 }

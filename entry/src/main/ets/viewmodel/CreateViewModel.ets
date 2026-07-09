@@ -5,6 +5,14 @@ import { PublishStatus } from '../model/enums/PublishStatus'
 import { IdGenerator } from '../common/utils/IdGenerator'
 
 /**
+ * 验证结果
+ */
+class CheckResult {
+  valid: boolean = false
+  message: string = ''
+}
+
+/**
  * 创建问卷视图模型 — 管理创建/编辑流程
  * Stage 2: 使用内存存储，后续替换为数据库
  */
@@ -114,23 +122,35 @@ export class CreateViewModel {
   }
 
   /** 验证问卷是否有效 */
-  validate(): { valid: boolean; message: string } {
+  validate(): CheckResult {
     if (!this.questionnaire.title || this.questionnaire.title.trim().length === 0) {
-      return { valid: false, message: '请输入问卷标题' }
+      const r = new CheckResult()
+      r.valid = false
+      r.message = '请输入问卷标题'
+      return r
     }
     if (this.questions.length === 0) {
-      return { valid: false, message: '请至少添加一道题目' }
+      const r = new CheckResult()
+      r.valid = false
+      r.message = '请至少添加一道题目'
+      return r
     }
     for (let i = 0; i < this.questions.length; i++) {
       const q = this.questions[i]
       if (!q.title || q.title.trim().length === 0) {
-        return { valid: false, message: `第${i + 1}题标题不能为空` }
+        const r = new CheckResult()
+        r.valid = false
+        r.message = `第${i + 1}题标题不能为空`
+        return r
       }
       if (this.needsOptions(q.type) && q.options.length < 2) {
-        return { valid: false, message: `第${i + 1}题至少需要2个选项` }
+        const r = new CheckResult()
+        r.valid = false
+        r.message = `第${i + 1}题至少需要2个选项`
+        return r
       }
     }
-    return { valid: true, message: '' }
+    return new CheckResult()
   }
 
   private needsOptions(type: QuestionType): boolean {

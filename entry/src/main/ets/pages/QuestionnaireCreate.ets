@@ -7,8 +7,7 @@ import { Question } from '../model/Question'
 import { QuestionType } from '../model/enums/QuestionType'
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
-import { router } from '@kit.ArkUI'
-import { promptAction } from '@kit.ArkUI'
+import { NavigationUtil } from '../common/utils/NavigationUtil'
 import { IdGenerator } from '../common/utils/IdGenerator'
 
 /**
@@ -35,7 +34,7 @@ struct QuestionnaireCreate {
           title: this.vm.isEditing ? '编辑问卷' : '创建问卷',
           showBack: true,
           onBack: () => {
-            router.back()
+            NavigationUtil.back()
           }
         })
 
@@ -227,7 +226,7 @@ struct QuestionnaireCreate {
         PrimaryButton({
           text: '发布问卷',
           disabled: false,
-          onClick: () => {
+          onButtonClick: () => {
             this.handlePublish()
           }
         })
@@ -245,11 +244,10 @@ struct QuestionnaireCreate {
   handleSave(): void {
     const result = this.vm.saveDraft()
     if (result) {
-      promptAction.showToast({ message: '已保存草稿', duration: 1500 })
+      NavigationUtil.showToast('已保存草稿')
       // TODO: 写入数据库后返回首页
-      // router.back()
     } else {
-      promptAction.showToast({ message: '请填写问卷标题', duration: 1500 })
+      NavigationUtil.showToast('请填写问卷标题')
     }
   }
 
@@ -257,11 +255,11 @@ struct QuestionnaireCreate {
   handlePublish(): void {
     const validation = this.vm.validate()
     if (!validation.valid) {
-      promptAction.showToast({ message: validation.message, duration: 2000 })
+      NavigationUtil.showToast(validation.message)
       return
     }
     this.vm.publish()
-    promptAction.showToast({ message: '发布成功', duration: 1500 })
+    NavigationUtil.showToast('发布成功')
     // TODO: 写入数据库后返回首页
     // router.back()
   }
