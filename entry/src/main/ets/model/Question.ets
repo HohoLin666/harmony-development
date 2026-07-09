@@ -1,14 +1,15 @@
 import { QuestionType } from './enums/QuestionType'
 
 /**
- * 选项
+ * 选项 — 需要 @Observed 以支持 @Link 双向绑定
  */
+@Observed
 export class Option {
   id: string = ''
   questionId: string = ''
   text: string = ''
   orderIndex: number = 0
-  isCustom: boolean = false // 是否"其他"自定义选项
+  isCustom: boolean = false
 }
 
 /**
@@ -33,8 +34,9 @@ export enum LogicJumpAction {
 }
 
 /**
- * 题目实体
+ * 题目实体 — 需要 @Observed 以支持 @Link/@ObjectLink 双向绑定
  */
+@Observed
 export class Question {
   id: string = ''
   questionnaireId: string = ''
