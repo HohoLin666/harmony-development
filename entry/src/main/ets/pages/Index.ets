@@ -151,26 +151,19 @@ struct Index {
               QuestionnaireCard({
                 questionnaire: item,
                 onClick: () => {
-                  router.pushUrl({
-                    url: 'pages/QuestionnaireFill',
-                    params: { questionnaireId: item.id }
-                  })
+                  // 我的问卷 → 查看数据分析
+                  if (item.status === PublishStatus.PUBLISHED) {
+                    router.pushUrl({
+                      url: 'pages/QuestionnaireAnalysis',
+                      params: { questionnaireId: item.id }
+                    })
+                  } else {
+                    router.pushUrl({
+                      url: 'pages/QuestionnaireCreate',
+                      params: { questionnaireId: item.id }
+                    })
+                  }
                 }
-            }
-          })
-        }
-        .width('100%')
-        .height('100%')
-        .divider({ strokeWidth: 0 })
-        .scrollBar(BarState.Off)
-
-        // FAB 创建按钮
-        this.buildFAB()
-      }
-    }
-  }
-
-  /** 浮动创建按钮 (FAB) */
   @Builder
   buildFAB() {
     Button('+')
