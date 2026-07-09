@@ -2,15 +2,15 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "module description"
+      "value": "鸿蒙版在线问卷调查系统"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "description"
+      "value": "在线问卷调查系统"
     },
     {
       "name": "EntryAbility_label",
-      "value": "label"
+      "value": "问卷调查"
     }
   ]
 }
