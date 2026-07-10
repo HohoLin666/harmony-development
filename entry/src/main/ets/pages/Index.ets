@@ -8,8 +8,8 @@ import { Questionnaire } from '../model/Questionnaire'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { MockDataGenerator } from '../common/utils/MockData'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
-import { common } from '@kit.AbilityKit'
 import { AuthService } from '../services/AuthService'
+import { User } from '../model/User'
 
 // 底部 Tab 配置
 const HOME_TABS: TabItem[] = [
@@ -34,16 +34,13 @@ struct Index {
   }
 
   checkLogin(): void {
-    const context: common.Context = getContext(this) as common.Context
-    AuthService.init(context).then(() => {
-      AuthService.autoLogin().then((user) => {
-        if (user) {
-          this.userNickname = user.nickname
-        } else {
-          NavigationUtil.replaceUrl('pages/Login')
-        }
-      })
-    })
+    AuthService.init()
+    const user: User | null = AuthService.autoLogin()
+    if (user) {
+      this.userNickname = user.nickname
+    } else {
+      NavigationUtil.replaceUrl('pages/Login')
+    }
   }
 
   loadData(): void {
@@ -60,9 +57,8 @@ struct Index {
         title: this.userNickname ? `${this.userNickname}的主页` : '问卷大厅',
         actionText: '退出',
         onAction: () => {
-          AuthService.logout().then(() => {
-            NavigationUtil.replaceUrl('pages/Login')
-          })
+          AuthService.logout()
+          NavigationUtil.replaceUrl('pages/Login')
         }
       })
 

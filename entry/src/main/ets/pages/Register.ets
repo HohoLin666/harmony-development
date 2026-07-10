@@ -1,7 +1,7 @@
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
-import { AuthService } from '../services/AuthService'
+import { AuthService, AuthResult } from '../services/AuthService'
 
 /**
  * 注册页
@@ -106,17 +106,13 @@ struct Register {
       return
     }
     this.loading = true
-    AuthService.register(this.username.trim(), this.password, this.nickname.trim()).then((result) => {
-      this.loading = false
-      if (result.success) {
-        NavigationUtil.showToast('注册成功，请登录')
-        NavigationUtil.back()
-      } else {
-        this.errorMsg = result.message
-      }
-    }).catch(() => {
-      this.loading = false
-      this.errorMsg = '网络异常，请重试'
-    })
+    const result: AuthResult = AuthService.register(this.username.trim(), this.password, this.nickname.trim())
+    this.loading = false
+    if (result.success) {
+      NavigationUtil.showToast('注册成功，请登录')
+      NavigationUtil.back()
+    } else {
+      this.errorMsg = result.message
+    }
   }
 }

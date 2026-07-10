@@ -1,8 +1,7 @@
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
-import { common } from '@kit.AbilityKit'
-import { AuthService } from '../services/AuthService'
+import { AuthService, AuthResult } from '../services/AuthService'
 
 /**
  * 登录页 — 账号密码登录
@@ -16,8 +15,7 @@ struct Login {
   @State errorMsg: string = ''
 
   aboutToAppear(): void {
-    const context: common.Context = getContext(this) as common.Context
-    AuthService.init(context)
+    AuthService.init()
   }
 
   build() {
@@ -131,17 +129,13 @@ struct Login {
       return
     }
     this.loading = true
-    AuthService.login(this.username.trim(), this.password).then((result) => {
-      this.loading = false
-      if (result.success) {
-        NavigationUtil.replaceUrl('pages/Index')
-      } else {
-        this.errorMsg = result.message
-      }
-    }).catch(() => {
-      this.loading = false
-      this.errorMsg = '网络异常，请重试'
-    })
+    const result: AuthResult = AuthService.login(this.username.trim(), this.password)
+    this.loading = false
+    if (result.success) {
+      NavigationUtil.replaceUrl('pages/Index')
+    } else {
+      this.errorMsg = result.message
+    }
   }
 
   onBackPress(): boolean {
