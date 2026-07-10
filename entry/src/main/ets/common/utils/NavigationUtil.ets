@@ -68,13 +68,18 @@ export class NavigationUtil {
   /** 显示确认对话框 */
   static showDialog(title: string, message: string, onConfirm: () => void): void {
     try {
-      const dialogParam: AlertDialogParam = {
+      promptAction.showDialog({
         title: title,
         message: message,
-        primaryButton: { value: '确认', action: onConfirm },
-        secondaryButton: { value: '取消', action: () => {} }
-      }
-      AlertDialog.show(dialogParam)
+        buttons: [
+          { text: '取消', color: '#999999' },
+          { text: '确认', color: '#1E6FFF' }
+        ]
+      }).then((result: promptAction.ShowDialogSuccessResponse) => {
+        if (result.index === 1) {
+          onConfirm()
+        }
+      })
     } catch (err) {
       console.error('[Dialog] failed')
     }

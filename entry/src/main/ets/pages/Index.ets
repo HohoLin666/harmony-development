@@ -8,6 +8,7 @@ import { Questionnaire } from '../model/Questionnaire'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { MockDataGenerator } from '../common/utils/MockData'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
+import { common } from '@kit.AbilityKit'
 import { AuthService } from '../services/AuthService'
 
 // 底部 Tab 配置
@@ -33,7 +34,8 @@ struct Index {
   }
 
   checkLogin(): void {
-    AuthService.init({} as Object).then(() => {
+    const context: common.Context = getContext(this) as common.Context
+    AuthService.init(context).then(() => {
       AuthService.autoLogin().then((user) => {
         if (user) {
           this.userNickname = user.nickname

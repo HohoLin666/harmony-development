@@ -1,6 +1,7 @@
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
+import { common } from '@kit.AbilityKit'
 import { AuthService } from '../services/AuthService'
 
 /**
@@ -15,7 +16,8 @@ struct Login {
   @State errorMsg: string = ''
 
   aboutToAppear(): void {
-    AuthService.init({} as Object)
+    const context: common.Context = getContext(this) as common.Context
+    AuthService.init(context)
   }
 
   build() {
