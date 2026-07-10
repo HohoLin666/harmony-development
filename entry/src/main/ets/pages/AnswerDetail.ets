@@ -159,27 +159,34 @@ struct AnswerDetail {
   @Builder
   buildMultiAnswer(question: Question) {
     Column() {
-      const answer: string = this.answers[question.id]
-      if (answer && answer.length > 0) {
-        try {
-          const arr: string[] = JSON.parse(answer)
-          ForEach(arr, (optionId: string) => {
-            Text('✓ ' + this.getOptionText(question, optionId))
-              .fontSize(AppDimens.FONT_BODY).fontColor(AppColors.TEXT_PRIMARY)
-              .padding({ left: AppDimens.SPACE_MD, top: 4, bottom: 4, right: AppDimens.SPACE_MD })
-              .backgroundColor(AppColors.BG_GREY).borderRadius(AppDimens.RADIUS_SM)
-              .margin({ bottom: 4 })
-          })
-        } catch (e) {
-          Text('未选择')
-            .fontSize(AppDimens.FONT_BODY).fontColor(AppColors.TEXT_TERTIARY)
-        }
+      if (this.getMultiAnswerOptions(question).length > 0) {
+        ForEach(this.getMultiAnswerOptions(question), (item: string) => {
+          Text('✓ ' + this.getOptionText(question, item))
+            .fontSize(AppDimens.FONT_BODY).fontColor(AppColors.TEXT_PRIMARY)
+            .padding({ left: AppDimens.SPACE_MD, top: 4, bottom: 4, right: AppDimens.SPACE_MD })
+            .backgroundColor(AppColors.BG_GREY).borderRadius(AppDimens.RADIUS_SM)
+            .margin({ bottom: 4 })
+        })
       } else {
         Text('未选择')
           .fontSize(AppDimens.FONT_BODY).fontColor(AppColors.TEXT_TERTIARY)
       }
     }
     .width('100%').alignItems(HorizontalAlign.Start)
+  }
+
+  /** 解析多选题答案，返回选中的 optionId 数组 */
+  getMultiAnswerOptions(question: Question): string[] {
+    const answer: string = this.answers[question.id]
+    if (!answer || answer.length === 0) {
+      return []
+    }
+    try {
+      const arr: string[] = JSON.parse(answer)
+      return arr
+    } catch (e) {
+      return []
+    }
   }
 
   /** 根据 optionId 获取选项文本 */

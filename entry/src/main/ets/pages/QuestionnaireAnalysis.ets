@@ -100,7 +100,6 @@ struct QuestionnaireAnalysis {
         .fontSize(AppDimens.FONT_H3).fontWeight(FontWeight.Medium).fontColor(AppColors.TEXT_PRIMARY)
         .margin({ bottom: AppDimens.SPACE_LG })
       Row() {
-        this.buildStatItem('回收', `${this.vm.getTotalResponses()}`)
         this.buildStatItem('题目', `${this.vm.questions.length}`)
         this.buildStatItem('完成率', '85%')
       }
