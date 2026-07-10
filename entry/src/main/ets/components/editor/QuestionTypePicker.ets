@@ -18,11 +18,9 @@ const TYPE_OPTIONS: TypeOption[] = [
   { type: QuestionType.SINGLE, label: '单选', icon: '☉', description: '选择一个选项' },
   { type: QuestionType.MULTI, label: '多选', icon: '☑', description: '选择多个选项' },
   { type: QuestionType.TEXT, label: '填空', icon: '✎', description: '输入文本回答' },
-  { type: QuestionType.TEXTAREA, label: '文本', icon: '📄', description: '多行文本输入' },
   { type: QuestionType.RATE, label: '评分', icon: '⭐', description: '1-10分打分' },
   { type: QuestionType.DATE, label: '日期', icon: '📅', description: '选择日期' },
-  { type: QuestionType.NUMBER, label: '数字', icon: '#', description: '输入数字' },
-  { type: QuestionType.MATRIX, label: '矩阵', icon: '⊞', description: '矩阵选择' }
+  { type: QuestionType.NUMBER, label: '数字', icon: '#', description: '输入数字' }
 ]
 
 @Component
@@ -92,7 +90,7 @@ export struct QuestionTypePicker {
             right: AppDimens.CARD_PADDING,
             bottom: AppDimens.SPACE_XXL
           })
-          .height(360)
+          .height(280)
         }
         .width('100%')
         .backgroundColor(AppColors.BG_SECONDARY)
