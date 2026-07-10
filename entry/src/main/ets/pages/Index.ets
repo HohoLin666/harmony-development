@@ -58,7 +58,7 @@ struct Index {
     Column() {
       // 顶部导航栏
       AppBar({
-        title: this.currentTab === 3 ? '我的' : (this.userNickname ? `${this.userNickname}的主页` : '问卷大厅')
+        title: this.currentTab === 3 ? '我的' : '问卷星球'
       })
 
       // 主内容区
