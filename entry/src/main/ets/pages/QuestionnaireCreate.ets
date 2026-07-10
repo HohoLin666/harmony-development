@@ -81,10 +81,11 @@ struct QuestionnaireCreate {
           onSelect: (type: QuestionType) => {
             if (this.editingQuestionIndex >= 0) {
               this.questions[this.editingQuestionIndex].type = type
+              this.questions = [...this.questions]
               this.editingQuestionIndex = -1
             } else {
               this.vm.addQuestion(type)
-              this.questions = this.vm.questions // 触发 UI 更新
+              this.questions = [...this.vm.questions]
             }
             this.showTypePicker = false
           },
@@ -143,18 +144,18 @@ struct QuestionnaireCreate {
     if (this.questions.length > 0) {
       ForEach(this.questions, (question: Question, index: number) => {
         QuestionEditor({
-          question: $question,
+          question: question,
           index: index + 1,
           onDelete: () => {
             this.vm.removeQuestion(index)
-            this.questions = this.vm.questions // 触发 UI 更新
+            this.questions = [...this.vm.questions]
           },
           onChangeType: () => {
             this.editingQuestionIndex = index
             this.showTypePicker = true
           }
         })
-      })
+      }, (question: Question) => question.id)
     } else {
       // 空提示
       Column() {

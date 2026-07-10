@@ -93,10 +93,24 @@ export class DatabaseHelper {
       )
     `
 
+    const createUser = `
+      CREATE TABLE IF NOT EXISTS user (
+        id TEXT PRIMARY KEY,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        nickname TEXT DEFAULT '',
+        avatar TEXT DEFAULT '',
+        phone TEXT DEFAULT '',
+        created_at INTEGER NOT NULL,
+        last_login_at INTEGER DEFAULT 0
+      )
+    `
+
     await this.rdbStore.executeSql(createQuestionnaire)
     await this.rdbStore.executeSql(createQuestion)
     await this.rdbStore.executeSql(createResponse)
     await this.rdbStore.executeSql(createAnswer)
+    await this.rdbStore.executeSql(createUser)
   }
 
   /** 关闭数据库 */

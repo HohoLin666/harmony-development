@@ -48,7 +48,7 @@ export struct OptionEditor {
         .padding({ left: AppDimens.SPACE_SM, right: AppDimens.SPACE_SM, top: 6, bottom: 6 })
         .borderRadius(AppDimens.RADIUS_MD).backgroundColor(AppColors.BG_GREY)
         .margin({ bottom: AppDimens.SPACE_SM })
-      })
+      }, (option: Option) => option.id)
 
       Row() {
         Row() {

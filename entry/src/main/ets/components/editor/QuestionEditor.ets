@@ -13,7 +13,7 @@ import { AppDimens } from '../../theme/AppDimens'
  */
 @Component
 export struct QuestionEditor {
-  @Link question: Question
+  @ObjectLink question: Question
   @Prop index: number = 1
   onDelete?: () => void
   onChangeType?: () => void

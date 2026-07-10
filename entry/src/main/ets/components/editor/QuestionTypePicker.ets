@@ -82,7 +82,7 @@ export struct QuestionTypePicker {
                   if (this.onSelect) this.onSelect(option.type)
                 })
               }
-            })
+            }, (option: TypeOption) => option.type)
           }
           .columnsTemplate('1fr 1fr')
           .columnsGap(AppDimens.SPACE_SM)

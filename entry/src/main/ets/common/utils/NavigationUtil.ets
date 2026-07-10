@@ -7,18 +7,22 @@ import { BusinessError } from '@kit.BasicServicesKit'
  */
 export class NavigationUtil {
   /** 跳转页面 */
-  static pushUrl(url: string, params?: Map<string, Object>): void {
+  static pushUrl(url: string, params?: Record<string, Object>): void {
     try {
-      const routerParams: Record<string, Object> = {}
-      if (params) {
-        params.forEach((value, key) => {
-          routerParams[key] = value
-        })
-      }
-      router.pushUrl({ url, params: routerParams })
+      router.pushUrl({ url, params: params || {} })
     } catch (err) {
       const error = err as BusinessError
       console.error(`[Navigation] pushUrl failed: ${error.message}`)
+    }
+  }
+
+  /** 替换当前页面（清栈跳转，用于登录后跳主页） */
+  static replaceUrl(url: string, params?: Record<string, Object>): void {
+    try {
+      router.replaceUrl({ url, params: params || {} })
+    } catch (err) {
+      const error = err as BusinessError
+      console.error(`[Navigation] replaceUrl failed: ${error.message}`)
     }
   }
 
@@ -33,17 +37,12 @@ export class NavigationUtil {
   }
 
   /** 获取路由参数 */
-  static getParams(): Map<string, Object> {
-    const result: Map<string, Object> = new Map()
+  static getParams(): Record<string, Object> {
     try {
-      const raw = router.getParams() as Record<string, Object> || {}
-      Object.keys(raw).forEach(key => {
-        result.set(key, raw[key])
-      })
+      return router.getParams() as Record<string, Object> || {}
     } catch (err) {
-      return new Map()
+      return {}
     }
-    return result
   }
 
   /** 显示 Toast 提示 */

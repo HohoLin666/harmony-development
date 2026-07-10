@@ -8,6 +8,8 @@ import { Questionnaire } from '../model/Questionnaire'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { MockDataGenerator } from '../common/utils/MockData'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
+import { AuthService } from '../services/AuthService'
+import { common } from '@kit.AbilityKit'
 
 // 底部 Tab 配置
 const HOME_TABS: TabItem[] = [
@@ -22,13 +24,25 @@ const HOME_TABS: TabItem[] = [
 struct Index {
   @State currentTab: number = 0
   @State loading: boolean = false
-  // 公开问卷列表（问卷大厅）
   @State publicList: Questionnaire[] = []
-  // 我的草稿
   @State myDrafts: Questionnaire[] = []
+  @State userNickname: string = ''
 
   aboutToAppear(): void {
     this.loadData()
+    this.checkLogin()
+  }
+
+  checkLogin(): void {
+    AuthService.init(getContext(this) as common.Context).then(() => {
+      AuthService.autoLogin().then((user) => {
+        if (user) {
+          this.userNickname = user.nickname
+        } else {
+          NavigationUtil.replaceUrl('pages/Login')
+        }
+      })
+    })
   }
 
   loadData(): void {
@@ -42,10 +56,12 @@ struct Index {
     Column() {
       // 顶部导航栏
       AppBar({
-        title: '问卷大厅',
-        actionText: '创建',
+        title: this.userNickname ? `${this.userNickname}的主页` : '问卷大厅',
+        actionText: '退出',
         onAction: () => {
-          this.goCreate()
+          AuthService.logout().then(() => {
+            NavigationUtil.replaceUrl('pages/Login')
+          })
         }
       })
 
