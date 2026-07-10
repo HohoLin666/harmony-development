@@ -23,7 +23,7 @@ const HOME_TABS: TabItem[] = [
 @Entry
 @Component
 struct Index {
-  @State currentTab: number = 0
+  @State @Watch('onTabChange') currentTab: number = 0
   @State loading: boolean = false
   @State publicList: Questionnaire[] = []
   @State myDrafts: Questionnaire[] = []
@@ -45,6 +45,11 @@ struct Index {
     this.loadData()
   }
 
+  onTabChange(): void {
+    // 切换Tab时刷新数据（确保"我的参与"能看到最新记录）
+    this.loadData()
+  }
+
   checkLogin(): void {
     AuthService.init()
     const user: User | null = AuthService.autoLogin()
@@ -59,7 +64,9 @@ struct Index {
   loadData(): void {
     this.publicList = QuestionnaireStore.getPublished()
     this.myDrafts = QuestionnaireStore.getMine()
-    this.myParticipations = ResponseStore.getAll()
+    // 创建新数组副本，确保 @State 检测到变化
+    const all: ParticipationRecord[] = ResponseStore.getAll()
+    this.myParticipations = all.slice()
   }
 
   build() {

@@ -4,6 +4,7 @@ import { Answer } from '../model/Answer'
 import { QuestionType } from '../model/enums/QuestionType'
 import { IdGenerator } from '../common/utils/IdGenerator'
 import { QuestionnaireStore } from '../services/QuestionnaireStore'
+import { MockDataGenerator } from '../common/utils/MockData'
 
 /**
  * 验证结果
@@ -37,6 +38,14 @@ export class FillViewModel {
     if (found) {
       this.questionnaire = found
       this.questions = QuestionnaireStore.getQuestions(questionnaireId)
+    } else {
+      // 兜底：从 MockData 加载（保证填写页有内容）
+      const mockList: Questionnaire[] = MockDataGenerator.generateQuestionnaires()
+      const mockFound: Questionnaire | undefined = mockList.find((q: Questionnaire) => q.id === questionnaireId)
+      if (mockFound) {
+        this.questionnaire = mockFound
+        this.questions = MockDataGenerator.generateQuestions(questionnaireId)
+      }
     }
     // 初始化答案
     this.answers = new Map()
