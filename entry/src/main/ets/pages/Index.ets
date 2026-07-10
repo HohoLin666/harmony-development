@@ -234,8 +234,11 @@ struct Index {
             .borderRadius(AppDimens.RADIUS_LG)
             .margin({ bottom: AppDimens.CARD_MARGIN_BOTTOM })
             .onClick(() => {
-              const params: Record<string, Object> = { 'questionnaireId': record.questionnaireId }
-              NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', params)
+              const params: Record<string, Object> = {
+                'recordId': record.questionnaireId,
+                'submittedAt': String(record.submittedAt)
+              }
+              NavigationUtil.pushUrl('pages/AnswerDetail', params)
             })
           }
         })

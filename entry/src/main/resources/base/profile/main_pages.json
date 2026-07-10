@@ -4,6 +4,7 @@
     "pages/Register",
     "pages/Index",
     "pages/ProfileEdit",
+    "pages/AnswerDetail",
     "pages/QuestionnaireCreate",
     "pages/QuestionnaireFill",
     "pages/QuestionnaireAnalysis",
