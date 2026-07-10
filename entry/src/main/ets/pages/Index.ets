@@ -262,11 +262,6 @@ struct Index {
   @Builder
   buildProfileInfo() {
     Row() {
-      this.buildStatItem('个人信息', this.userNickname || '已登录')
-      Blank()
-        .width(1)
-        .height(36)
-        .backgroundColor(AppColors.DIVIDER)
       this.buildStatItem('我的创建', `${this.myDrafts.length} 份`)
       Blank()
         .width(1)
