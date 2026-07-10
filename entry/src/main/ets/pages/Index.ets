@@ -40,6 +40,11 @@ struct Index {
     this.checkLogin()
   }
 
+  onPageShow(): void {
+    // 每次页面可见时刷新数据（从填写页返回后能看到新记录）
+    this.loadData()
+  }
+
   checkLogin(): void {
     AuthService.init()
     const user: User | null = AuthService.autoLogin()
