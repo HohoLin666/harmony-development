@@ -298,7 +298,7 @@ struct Index {
   buildUserMenu() {
     Column() {
       this.buildUserMenuItem('●', '个人信息', '查看当前账号信息', AppColors.INFO, () => {
-        NavigationUtil.showToast(this.username ? `当前账号：${this.username}` : '当前为本地开发账号')
+        NavigationUtil.pushUrl('pages/ProfileEdit')
       })
       this.buildMenuDivider()
       this.buildUserMenuItem('■', '我的创建', '查看我创建的问卷', AppColors.SUCCESS, () => {

@@ -3,6 +3,7 @@
     "pages/Login",
     "pages/Register",
     "pages/Index",
+    "pages/ProfileEdit",
     "pages/QuestionnaireCreate",
     "pages/QuestionnaireFill",
     "pages/QuestionnaireAnalysis",

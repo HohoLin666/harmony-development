@@ -98,6 +98,75 @@ export class AuthService {
     AuthService.currentUser = null
   }
 
+  /** 修改个人信息 — 用户名/昵称/头像/密码 */
+  static updateProfile(nickname: string, avatar: string, newPassword: string): AuthResult {
+    const result: AuthResult = new AuthResult()
+    const user: User | null = AuthService.currentUser
+    if (!user) {
+      result.message = '请先登录'
+      return result
+    }
+
+    if (nickname && nickname.length > 0) {
+      user.nickname = nickname
+    }
+    if (avatar && avatar.length > 0) {
+      user.avatar = avatar
+    }
+    if (newPassword && newPassword.length >= 6) {
+      user.password = AuthService.hashPassword(newPassword)
+    }
+
+    // 同步到内存库
+    for (let i: number = 0; i < AuthService.memoryUsers.length; i++) {
+      if (AuthService.memoryUsers[i].id === user.id) {
+        AuthService.memoryUsers[i] = user
+        break
+      }
+    }
+    AuthService.currentUser = user
+    result.success = true
+    result.message = '保存成功'
+    return result
+  }
+
+  /** 修改用户名（带查重） */
+  static updateUsername(newUsername: string): AuthResult {
+    const result: AuthResult = new AuthResult()
+    const user: User | null = AuthService.currentUser
+    if (!user) {
+      result.message = '请先登录'
+      return result
+    }
+    if (!newUsername || newUsername.length < 3) {
+      result.message = '用户名至少3个字符'
+      return result
+    }
+    if (newUsername === user.username) {
+      result.success = true
+      result.message = '用户名未变化'
+      return result
+    }
+    // 查重
+    for (let i: number = 0; i < AuthService.memoryUsers.length; i++) {
+      if (AuthService.memoryUsers[i].username === newUsername && AuthService.memoryUsers[i].id !== user.id) {
+        result.message = '用户名已存在'
+        return result
+      }
+    }
+    user.username = newUsername
+    for (let i: number = 0; i < AuthService.memoryUsers.length; i++) {
+      if (AuthService.memoryUsers[i].id === user.id) {
+        AuthService.memoryUsers[i] = user
+        break
+      }
+    }
+    AuthService.currentUser = user
+    result.success = true
+    result.message = '用户名修改成功'
+    return result
+  }
+
   static getCurrentUser(): User | null {
     return AuthService.currentUser
   }
