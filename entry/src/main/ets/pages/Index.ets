@@ -8,6 +8,7 @@ import { Questionnaire } from '../model/Questionnaire'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
 import { AuthService } from '../services/AuthService'
+import { ResponseStore, ParticipationRecord } from '../services/ResponseStore'
 import { User } from '../model/User'
 import { QuestionnaireStore } from '../services/QuestionnaireStore'
 
@@ -26,6 +27,7 @@ struct Index {
   @State loading: boolean = false
   @State publicList: Questionnaire[] = []
   @State myDrafts: Questionnaire[] = []
+  @State myParticipations: ParticipationRecord[] = []
   @State userNickname: string = ''
   @State username: string = ''
 
@@ -52,6 +54,7 @@ struct Index {
   loadData(): void {
     this.publicList = QuestionnaireStore.getPublished()
     this.myDrafts = QuestionnaireStore.getMine()
+    this.myParticipations = ResponseStore.getAll()
   }
 
   build() {
@@ -102,7 +105,7 @@ struct Index {
     } else if (this.currentTab === 1) {
       this.buildMyDrafts()
     } else if (this.currentTab === 2) {
-      EmptyState({ text: '你还没有参与过问卷\n去问卷大厅看看吧' })
+      this.buildMyParticipations()
     } else {
       this.buildUserCenter()
     }
@@ -186,6 +189,57 @@ struct Index {
         this.buildFAB()
       }
     }
+  }
+
+  @Builder
+  buildMyParticipations() {
+    if (this.myParticipations.length === 0) {
+      EmptyState({ text: '你还没有参与过问卷\n去问卷大厅看看吧' })
+    } else {
+      List() {
+        ForEach(this.myParticipations, (record: ParticipationRecord) => {
+          ListItem() {
+            Column() {
+              Text(record.questionnaireTitle)
+                .fontSize(AppDimens.FONT_BODY)
+                .fontColor(AppColors.TEXT_PRIMARY)
+                .fontWeight(FontWeight.Medium)
+              Row() {
+                Text(`${record.questionCount} 题`)
+                  .fontSize(AppDimens.FONT_CAPTION)
+                  .fontColor(AppColors.TEXT_TERTIARY)
+                Blank()
+                Text(this.formatTime(record.submittedAt))
+                  .fontSize(AppDimens.FONT_CAPTION)
+                  .fontColor(AppColors.TEXT_TERTIARY)
+              }
+              .width('100%')
+              .margin({ top: AppDimens.SPACE_SM })
+            }
+            .width('100%')
+            .padding(AppDimens.CARD_PADDING)
+            .backgroundColor(AppColors.BG_PRIMARY)
+            .borderRadius(AppDimens.RADIUS_LG)
+            .margin({ bottom: AppDimens.CARD_MARGIN_BOTTOM })
+            .onClick(() => {
+              const params: Record<string, Object> = { 'questionnaireId': record.questionnaireId }
+              NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', params)
+            })
+          }
+        })
+      }
+      .width('100%')
+      .height('100%')
+      .divider({ strokeWidth: 0 })
+      .scrollBar(BarState.Off)
+    }
+  }
+
+  formatTime(timestamp: number): string {
+    const date: Date = new Date(timestamp)
+    const month: number = date.getMonth() + 1
+    const day: number = date.getDate()
+    return `${month}月${day}日`
   }
 
   @Builder
