@@ -151,8 +151,8 @@ struct QuestionnaireFill {
     }
     NavigationUtil.showDialog('确认提交', '提交后将无法修改，确认提交吗？', () => {
       this.vm.submit()
-      // 保存参与记录
-      ResponseStore.save(this.vm.questionnaire, this.vm.questions.length)
+      // 保存参与记录（含答案）
+      ResponseStore.save(this.vm.questionnaire, this.vm.questions.length, this.answers)
     })
   }
 }
