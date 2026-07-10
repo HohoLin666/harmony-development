@@ -334,10 +334,6 @@ struct Index {
           .fontSize(AppDimens.FONT_BODY)
           .fontColor(AppColors.TEXT_PRIMARY)
           .fontWeight(FontWeight.Medium)
-        Text(subtitle)
-          .fontSize(AppDimens.FONT_CAPTION)
-          .fontColor(AppColors.TEXT_TERTIARY)
-          .margin({ top: 2 })
       }
       .layoutWeight(1)
       .alignItems(HorizontalAlign.Start)
