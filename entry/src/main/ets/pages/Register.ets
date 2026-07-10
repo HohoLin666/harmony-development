@@ -106,13 +106,19 @@ struct Register {
       return
     }
     this.loading = true
-    const result: AuthResult = AuthService.register(this.username.trim(), this.password, this.nickname.trim())
-    this.loading = false
-    if (result.success) {
-      NavigationUtil.showToast('注册成功，请登录')
-      NavigationUtil.back()
-    } else {
-      this.errorMsg = result.message
+    try {
+      const result: AuthResult = AuthService.register(this.username.trim(), this.password, this.nickname.trim())
+      if (result.success) {
+        this.errorMsg = ''
+        NavigationUtil.showToast('注册成功，请登录')
+        NavigationUtil.replaceUrl('pages/Login')
+      } else {
+        this.errorMsg = result.message || '注册失败，请重试'
+      }
+    } catch (err) {
+      this.errorMsg = '本地注册失败，请重试'
+    } finally {
+      this.loading = false
     }
   }
 }

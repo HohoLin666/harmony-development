@@ -3,12 +3,13 @@ import { Question, Option } from '../model/Question'
 import { QuestionType } from '../model/enums/QuestionType'
 import { PublishStatus } from '../model/enums/PublishStatus'
 import { IdGenerator } from '../common/utils/IdGenerator'
+import { QuestionnaireStore } from '../services/QuestionnaireStore'
 
 /**
  * 验证结果
  */
 class CheckResult {
-  valid: boolean = false
+  valid: boolean = true
   message: string = ''
 }
 
@@ -102,7 +103,7 @@ export class CreateViewModel {
     this.questionnaire.status = PublishStatus.DRAFT
     this.questionnaire.updatedAt = Date.now()
     this.questionnaire.questionCount = this.questions.length
-    // TODO: 写入数据库
+    QuestionnaireStore.save(this.questionnaire, this.questions)
     return true
   }
 
@@ -117,7 +118,7 @@ export class CreateViewModel {
     this.questionnaire.status = PublishStatus.PUBLISHED
     this.questionnaire.updatedAt = Date.now()
     this.questionnaire.questionCount = this.questions.length
-    // TODO: 写入数据库
+    QuestionnaireStore.save(this.questionnaire, this.questions)
     return true
   }
 

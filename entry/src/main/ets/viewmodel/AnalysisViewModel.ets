@@ -1,8 +1,8 @@
 import { Questionnaire } from '../model/Questionnaire'
-import { Question, Option } from '../model/Question'
+import { Question } from '../model/Question'
 import { QuestionType } from '../model/enums/QuestionType'
-import { MockDataGenerator } from '../common/utils/MockData'
 import { StatItem } from '../components/chart/PieChart'
+import { QuestionnaireStore } from '../services/QuestionnaireStore'
 
 /**
  * 假统计数据 — 用于 Stage 4
@@ -33,11 +33,10 @@ export class AnalysisViewModel {
 
   /** 加载问卷及统计数据 */
   loadData(questionnaireId: string): void {
-    const allMock: Questionnaire[] = MockDataGenerator.generateQuestionnaires()
-    const found: Questionnaire | undefined = allMock.find((q: Questionnaire) => q.id === questionnaireId)
+    const found: Questionnaire | null = QuestionnaireStore.findQuestionnaire(questionnaireId)
     if (found) {
       this.questionnaire = found
-      this.questions = MockDataGenerator.generateQuestions(questionnaireId)
+      this.questions = QuestionnaireStore.getQuestions(questionnaireId)
       this.stats = new Map()
       this.questions.forEach(q => {
         this.stats.set(q.id, AnalysisViewModel.generateFakeStats(q))

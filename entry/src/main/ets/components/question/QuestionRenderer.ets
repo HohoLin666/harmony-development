@@ -251,7 +251,7 @@ struct TextAreaFill {
 }
 
 /**
- * 评分题 — 星级/数字评分
+ * 评分题 — 数字步进评分
  */
 @Component
 struct RateScore {
@@ -264,31 +264,73 @@ struct RateScore {
   }
 
   private get currentRate(): number {
-    return parseInt(this.answerValue) || 0
+    const rate: number = parseInt(this.answerValue) || 0
+    if (rate < 0) return 0
+    if (rate > this.maxRate) return this.maxRate
+    return rate
   }
 
-  private get scores(): number[] {
-    const result: number[] = []
-    for (let i = 1; i <= this.maxRate; i++) {
-      result.push(i)
+  private changeRate(delta: number): void {
+    let nextRate: number = this.currentRate + delta
+    if (nextRate < 0) {
+      nextRate = 0
     }
-    return result
+    if (nextRate > this.maxRate) {
+      nextRate = this.maxRate
+    }
+    if (this.onAnswerChange) {
+      this.onAnswerChange(String(nextRate))
+    }
   }
 
   build() {
-    Row() {
-      ForEach(this.scores, (score: number) => {
-        Text(score <= this.currentRate ? '★' : '☆')
-          .fontSize(32)
-          .fontColor(score <= this.currentRate ? AppColors.WARNING : AppColors.TEXT_PLACEHOLDER)
-          .margin({ right: AppDimens.SPACE_SM })
+    Column() {
+      Row() {
+        Button('‹')
+          .fontSize(24)
+          .fontColor(this.currentRate <= 0 ? AppColors.TEXT_PLACEHOLDER : AppColors.PRIMARY)
+          .backgroundColor(AppColors.PRIMARY_LIGHT)
+          .borderRadius(AppDimens.RADIUS_MD)
+          .width(48)
+          .height(44)
+          .enabled(this.currentRate > 0)
           .onClick(() => {
-            if (this.onAnswerChange) this.onAnswerChange(String(score))
+            this.changeRate(-1)
           })
-      })
+
+        Text(String(this.currentRate))
+          .fontSize(AppDimens.FONT_LARGE)
+          .fontWeight(FontWeight.Bold)
+          .fontColor(AppColors.TEXT_PRIMARY)
+          .textAlign(TextAlign.Center)
+          .width(96)
+          .height(44)
+          .border({ width: 1, color: AppColors.DIVIDER })
+          .borderRadius(AppDimens.RADIUS_MD)
+          .backgroundColor(AppColors.BG_GREY)
+          .margin({ left: AppDimens.SPACE_MD, right: AppDimens.SPACE_MD })
+
+        Button('›')
+          .fontSize(24)
+          .fontColor(this.currentRate >= this.maxRate ? AppColors.TEXT_PLACEHOLDER : AppColors.PRIMARY)
+          .backgroundColor(AppColors.PRIMARY_LIGHT)
+          .borderRadius(AppDimens.RADIUS_MD)
+          .width(48)
+          .height(44)
+          .enabled(this.currentRate < this.maxRate)
+          .onClick(() => {
+            this.changeRate(1)
+          })
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Center)
+
+      Text(`最高 ${this.maxRate} 分`)
+        .fontSize(AppDimens.FONT_CAPTION)
+        .fontColor(AppColors.TEXT_TERTIARY)
+        .margin({ top: AppDimens.SPACE_SM })
     }
     .width('100%')
-    .justifyContent(FlexAlign.Center)
     .padding({ top: AppDimens.SPACE_MD, bottom: AppDimens.SPACE_MD })
   }
 }

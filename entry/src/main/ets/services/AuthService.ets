@@ -1,5 +1,4 @@
 import { User } from '../model/User'
-import { IdGenerator } from '../common/utils/IdGenerator'
 
 export class AuthResult {
   success: boolean = false
@@ -11,64 +10,55 @@ export class AuthResult {
  * 应用重启后内存清空，需重新登录
  */
 export class AuthService {
-  private static readonly KEY_USER_ID: string = 'login_user_id'
-
-  /** 用户库 - Map<userId, User> */
-  private static memoryUsers: Map<string, User> = new Map()
-  /** 持久化登录态 - Map<key, value> */
-  private static memoryPrefs: Map<string, string> = new Map()
+  /** 本地开发用户库，后期接服务器时只需要替换 AuthService 内部实现 */
+  private static memoryUsers: User[] = []
   /** 当前登录用户 */
   private static currentUser: User | null = null
 
-  /** 初始化 - 同步执行（无 await，避免异常被 .catch 误捕） */
+  /** 初始化 - 本地内存模式无需异步依赖 */
   static init(): void {
-    const savedId: string = AuthService.memoryPrefs.get(AuthService.KEY_USER_ID) || ''
-    if (savedId) {
-      const savedUser: User | undefined = AuthService.memoryUsers.get(savedId)
-      if (savedUser) {
-        AuthService.currentUser = savedUser
-      }
-    }
   }
 
-  /** 注册 - 同步版本（最简，无任何 await） */
+  /** 注册 - 本地同步版本，不访问网络和数据库 */
   static register(username: string, password: string, nickname: string): AuthResult {
     const result: AuthResult = new AuthResult()
-    if (!username || username.length < 3) {
-      result.message = '用户名至少3个字符'
-      return result
-    }
-    if (!password || password.length < 6) {
-      result.message = '密码至少6个字符'
-      return result
-    }
-
-    // 查重
-    const allUsers: User[] = []
-    AuthService.memoryUsers.forEach((u: User) => { allUsers.push(u) })
-    for (let i: number = 0; i < allUsers.length; i++) {
-      if (allUsers[i].username === username) {
-        result.message = '用户名已存在'
+    try {
+      if (!username || username.length < 3) {
+        result.message = '用户名至少3个字符'
         return result
       }
+      if (!password || password.length < 6) {
+        result.message = '密码至少6个字符'
+        return result
+      }
+
+      for (let i: number = 0; i < AuthService.memoryUsers.length; i++) {
+        if (AuthService.memoryUsers[i].username === username) {
+          result.message = '用户名已存在'
+          return result
+        }
+      }
+
+      const now: number = Date.now()
+      const user: User = new User()
+      user.id = 'local_' + now.toString()
+      user.username = username
+      user.password = AuthService.hashPassword(password)
+      user.nickname = nickname || username
+      user.createdAt = now
+      user.lastLoginAt = now
+
+      AuthService.memoryUsers.push(user)
+      result.success = true
+      result.message = '注册成功'
+    } catch (err) {
+      result.success = false
+      result.message = '注册失败，请重试'
     }
-
-    const hashed: string = AuthService.hashPassword(password)
-    const user: User = new User()
-    user.id = IdGenerator.generate()
-    user.username = username
-    user.password = hashed
-    user.nickname = nickname || username
-    user.createdAt = Date.now()
-    user.lastLoginAt = Date.now()
-
-    AuthService.memoryUsers.set(user.id, user)
-    result.success = true
-    result.message = '注册成功'
     return result
   }
 
-  /** 登录 - 同步版本 */
+  /** 登录 - 本地同步版本 */
   static login(username: string, password: string): AuthResult {
     const result: AuthResult = new AuthResult()
     if (!username || !password) {
@@ -77,15 +67,12 @@ export class AuthService {
     }
 
     const hashed: string = AuthService.hashPassword(password)
-    const allUsers: User[] = []
-    AuthService.memoryUsers.forEach((u: User) => { allUsers.push(u) })
-
     let found: User | null = null
-    for (let i: number = 0; i < allUsers.length; i++) {
-      if (allUsers[i].username === username && allUsers[i].password === hashed) {
-        found = allUsers[i]
+    for (let i: number = 0; i < AuthService.memoryUsers.length; i++) {
+      if (AuthService.memoryUsers[i].username === username && AuthService.memoryUsers[i].password === hashed) {
+        found = AuthService.memoryUsers[i]
         found.lastLoginAt = Date.now()
-        AuthService.memoryUsers.set(found.id, found)
+        AuthService.memoryUsers[i] = found
         break
       }
     }
@@ -96,7 +83,6 @@ export class AuthService {
     }
 
     AuthService.currentUser = found
-    AuthService.memoryPrefs.set(AuthService.KEY_USER_ID, found.id)
     result.success = true
     result.message = '登录成功'
     return result
@@ -104,21 +90,12 @@ export class AuthService {
 
   /** 自动登录 - 同步 */
   static autoLogin(): User | null {
-    const savedId: string = AuthService.memoryPrefs.get(AuthService.KEY_USER_ID) || ''
-    if (savedId && AuthService.memoryUsers.has(savedId)) {
-      const user: User | undefined = AuthService.memoryUsers.get(savedId)
-      if (user) {
-        AuthService.currentUser = user
-        return user
-      }
-    }
-    return null
+    return AuthService.currentUser
   }
 
   /** 登出 */
   static logout(): void {
     AuthService.currentUser = null
-    AuthService.memoryPrefs.delete(AuthService.KEY_USER_ID)
   }
 
   static getCurrentUser(): User | null {

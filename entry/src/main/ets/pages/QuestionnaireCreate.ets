@@ -8,7 +8,8 @@ import { QuestionType } from '../model/enums/QuestionType'
 import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
-import { IdGenerator } from '../common/utils/IdGenerator'
+import { QuestionnaireStore } from '../services/QuestionnaireStore'
+import { Questionnaire } from '../model/Questionnaire'
 
 /**
  * 创建/编辑问卷页
@@ -23,7 +24,18 @@ struct QuestionnaireCreate {
   @State editingQuestionIndex: number = -1
 
   aboutToAppear(): void {
+    const params = NavigationUtil.getParams()
+    if (params && params['questionnaireId']) {
+      const questionnaireId: string = params['questionnaireId'] as string
+      const questionnaire: Questionnaire | null = QuestionnaireStore.findQuestionnaire(questionnaireId)
+      if (questionnaire) {
+        this.vm.loadQuestionnaire(questionnaire, QuestionnaireStore.getQuestions(questionnaireId))
+        this.questions = [...this.vm.questions]
+        return
+      }
+    }
     this.vm.initNew()
+    this.questions = []
   }
 
   build() {
@@ -246,7 +258,8 @@ struct QuestionnaireCreate {
     const result = this.vm.saveDraft()
     if (result) {
       NavigationUtil.showToast('已保存草稿')
-      // TODO: 写入数据库后返回首页
+      const params: Record<string, Object> = { 'tabIndex': '1' }
+      NavigationUtil.replaceUrl('pages/Index', params)
     } else {
       NavigationUtil.showToast('请填写问卷标题')
     }
@@ -259,9 +272,13 @@ struct QuestionnaireCreate {
       NavigationUtil.showToast(validation.message)
       return
     }
-    this.vm.publish()
-    NavigationUtil.showToast('发布成功')
-    // TODO: 写入数据库后返回首页
-    // router.back()
+    const result = this.vm.publish()
+    if (result) {
+      NavigationUtil.showToast('发布成功')
+      const params: Record<string, Object> = { 'tabIndex': '1' }
+      NavigationUtil.replaceUrl('pages/Index', params)
+    } else {
+      NavigationUtil.showToast('发布失败，请重试')
+    }
   }
 }

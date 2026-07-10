@@ -3,13 +3,13 @@ import { Question } from '../model/Question'
 import { Answer } from '../model/Answer'
 import { QuestionType } from '../model/enums/QuestionType'
 import { IdGenerator } from '../common/utils/IdGenerator'
-import { MockDataGenerator } from '../common/utils/MockData'
+import { QuestionnaireStore } from '../services/QuestionnaireStore'
 
 /**
  * 验证结果
  */
 export class ValidationResult {
-  valid: boolean = false
+  valid: boolean = true
   message: string = ''
   missingIndex: number = -1
 }
@@ -33,12 +33,10 @@ export class FillViewModel {
   /** 加载问卷数据 */
   loadQuestionnaire(questionnaireId: string): void {
     this.startTime = Date.now()
-    // Stage 3: Mock 数据加载
-    const allMock: Questionnaire[] = MockDataGenerator.generateQuestionnaires()
-    const found: Questionnaire | undefined = allMock.find((q: Questionnaire) => q.id === questionnaireId)
+    const found: Questionnaire | null = QuestionnaireStore.findQuestionnaire(questionnaireId)
     if (found) {
       this.questionnaire = found
-      this.questions = MockDataGenerator.generateQuestions(questionnaireId)
+      this.questions = QuestionnaireStore.getQuestions(questionnaireId)
     }
     // 初始化答案
     this.answers = new Map()
