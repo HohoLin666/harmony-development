@@ -15,12 +15,7 @@ export class QuestionnaireStore {
     if (QuestionnaireStore.initialized) {
       return
     }
-
-    QuestionnaireStore.questionnaires = MockDataGenerator.generateQuestionnaires()
-    for (let i = 0; i < QuestionnaireStore.questionnaires.length; i++) {
-      const questionnaireId: string = QuestionnaireStore.questionnaires[i].id
-      QuestionnaireStore.questionMap.set(questionnaireId, MockDataGenerator.generateQuestions(questionnaireId))
-    }
+    // 不再生成 Mock 数据，列表初始为空
     QuestionnaireStore.initialized = true
   }
 
