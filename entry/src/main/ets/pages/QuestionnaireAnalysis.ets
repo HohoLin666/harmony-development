@@ -21,8 +21,8 @@ struct QuestionnaireAnalysis {
 
   aboutToAppear(): void {
     try {
-      const params = NavigationUtil.getParams()
-      const qId = params.get('questionnaireId') as string || MockDataGenerator.mockIds[0]
+      const params: Record<string, Object> = NavigationUtil.getParams()
+      const qId: string = params['questionnaireId'] as string || MockDataGenerator.mockIds[0]
       this.vm.loadData(qId)
     } catch (e) {
       // Fallback

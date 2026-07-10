@@ -9,7 +9,6 @@ import { PublishStatus } from '../model/enums/PublishStatus'
 import { MockDataGenerator } from '../common/utils/MockData'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
 import { AuthService } from '../services/AuthService'
-import { common } from '@kit.AbilityKit'
 
 // 底部 Tab 配置
 const HOME_TABS: TabItem[] = [
@@ -34,7 +33,7 @@ struct Index {
   }
 
   checkLogin(): void {
-    AuthService.init(getContext(this) as common.Context).then(() => {
+    AuthService.init({} as Object).then(() => {
       AuthService.autoLogin().then((user) => {
         if (user) {
           this.userNickname = user.nickname
@@ -131,8 +130,7 @@ struct Index {
               QuestionnaireCard({
                 questionnaire: item,
                 onCardClick: () => {
-                  const params: Map<string, Object> = new Map()
-                  params.set('questionnaireId', item.id)
+                  const params: Record<string, Object> = { 'questionnaireId': item.id }
                   NavigationUtil.pushUrl('pages/QuestionnaireFill', params)
                 }
               })
@@ -171,12 +169,10 @@ struct Index {
                 onCardClick: () => {
                   // 我的问卷 → 查看数据分析
                   if (item.status === PublishStatus.PUBLISHED) {
-                    const params: Map<string, Object> = new Map()
-                    params.set('questionnaireId', item.id)
+                    const params: Record<string, Object> = { 'questionnaireId': item.id }
                     NavigationUtil.pushUrl('pages/QuestionnaireAnalysis', params)
                   } else {
-                    const params: Map<string, Object> = new Map()
-                    params.set('questionnaireId', item.id)
+                    const params: Record<string, Object> = { 'questionnaireId': item.id }
                     NavigationUtil.pushUrl('pages/QuestionnaireCreate', params)
                   }
                 }

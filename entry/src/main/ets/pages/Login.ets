@@ -2,7 +2,6 @@ import { AppColors } from '../theme/AppColors'
 import { AppDimens } from '../theme/AppDimens'
 import { NavigationUtil } from '../common/utils/NavigationUtil'
 import { AuthService } from '../services/AuthService'
-import { common } from '@kit.AbilityKit'
 
 /**
  * 登录页 — 账号密码登录
@@ -16,8 +15,7 @@ struct Login {
   @State errorMsg: string = ''
 
   aboutToAppear(): void {
-    // 初始化 AuthService
-    AuthService.init(getContext(this) as common.Context)
+    AuthService.init({} as Object)
   }
 
   build() {
